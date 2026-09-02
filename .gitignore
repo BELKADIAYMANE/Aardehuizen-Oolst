@@ -7,7 +7,7 @@ backend/__pycache__/
 .env
 backend/.env
 
-# Registered push tokens — personal data, don't commit
+# ---  Registered push tokens, personal data
 backend/data/devices.json
 
 # --- Node / Expo (app/) ---
