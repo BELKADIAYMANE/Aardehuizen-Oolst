@@ -55,19 +55,8 @@ def forecast_consumption_curve(cleaned_df: pd.DataFrame, etype: str, ctypec: str
     return sub.groupby("slot")["_value"].mean().reindex(range(SLOTS_PER_DAY)).fillna(0)
 
 
-def get_individual_forecast(target_date: str) -> list[dict]:
-    resident_clean = scoring.load_clean_csv("resident.csv")
-
-    hist_weather = weather.fetch_historical_weather("2026-03-29", "2026-04-29")
-    k = calibrate_solar_model(resident_clean, hist_weather)
-
-    fc_weather = weather.fetch_forecast_weather(days_ahead=3)
-    predicted_solar = forecast_solar_curve(fc_weather, k, target_date)
-
-    predicted_cons = forecast_consumption_curve(resident_clean, "powermeter", "consumption", n_days=7)
-
+def _recs_from_curves(predicted_solar: pd.Series, predicted_cons: pd.Series) -> list[dict]:
     predicted_suff = scoring.self_sufficiency_pct(predicted_solar, predicted_cons)
-
     recs = []
 
     dw = scoring.best_window(predicted_suff, duration_minutes=15)
@@ -97,6 +86,42 @@ def get_individual_forecast(target_date: str) -> list[dict]:
     })
 
     return recs
+
+
+def _calibrated_forecast_inputs(days_ahead: int = 8):
+    resident_clean = scoring.load_clean_csv("resident.csv")
+    hist_weather = weather.fetch_model_historical("2026-03-29", "2026-04-29")
+    k = calibrate_solar_model(resident_clean, hist_weather)
+    fc_weather = weather.fetch_forecast_weather(days_ahead=days_ahead)
+    predicted_cons = forecast_consumption_curve(resident_clean, "powermeter", "consumption", n_days=7)
+    return fc_weather, k, predicted_cons
+
+
+def get_individual_forecast(target_date: str) -> list[dict]:
+    fc_weather, k, predicted_cons = _calibrated_forecast_inputs(days_ahead=8)
+    predicted_solar = forecast_solar_curve(fc_weather, k, target_date)
+    return _recs_from_curves(predicted_solar, predicted_cons)
+
+
+def get_week_forecast(start_date: str, days: int = 7) -> dict:
+    """Same individual forecast method, one ECMWF pull, today through +6 days."""
+    from datetime import date, timedelta
+
+    days = min(max(int(days), 1), 8)
+    start = date.fromisoformat(start_date)
+    fc_weather, k, predicted_cons = _calibrated_forecast_inputs(days_ahead=max(days + 1, 8))
+
+    out = []
+    for offset in range(days):
+        day = start + timedelta(days=offset)
+        iso = day.isoformat()
+        predicted_solar = forecast_solar_curve(fc_weather, k, iso)
+        out.append({
+            "date": iso,
+            "recommendations": _recs_from_curves(predicted_solar, predicted_cons),
+        })
+
+    return {"start_date": start_date, "days": out}
 
 
 if __name__ == "__main__":

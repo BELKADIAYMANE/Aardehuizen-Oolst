@@ -1,23 +1,43 @@
-# --- Python (backend/) ---
+# Python
+**/__pycache__/
+*.py[cod]
+*.pyo
+**/.venv/
+**/venv/
 backend/venv/
 backend/__pycache__/
-**/__pycache__/
-*.pyc
-*.pyo
 .env
 backend/.env
+.env*.local
 
 # Registered push tokens — personal data, don't commit
 backend/data/devices.json
 
-# --- Node / Expo (app/) ---
+# Node / Expo / Next
+**/node_modules/
+**/.next/
+**/.expo/
+**/.kotlin/
+**/.gradle/
 app/node_modules/
 app/.expo/
 app/dist/
 app/npm-debug.log*
 app/.env
 
-# --- Editor / OS clutter ---
+# Builds and archives
+*.apk
+*.aab
+*.zip
+
+# Generated native projects
+mobile/android/
+mobile/ios/
+
+# Leftover widget dump
+_widget_src/
+
+# Editor / OS clutter
 .vscode/
 .idea/
 .DS_Store

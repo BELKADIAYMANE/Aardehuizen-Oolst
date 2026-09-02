@@ -1,0 +1,72 @@
+{
+  "expo": {
+    "name": "Zonwijzer",
+    "slug": "aardehuizen",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
+    },
+    "android": {
+      "package": "nl.aardehuizen.olst",
+      "usesCleartextTraffic": true,
+      "adaptiveIcon": {
+        "backgroundColor": "#eef3ee",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.USE_EXACT_ALARM"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#3e8965",
+          "defaultChannel": "sun-windows"
+        }
+      ],
+      "./plugins/withAndroidWidgetFixes",
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "Aardehuizen",
+              "label": "Zonwijzer",
+              "description": "When to use your sun — wash, dry, or wait.",
+              "minWidth": "320dp",
+              "minHeight": "280dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 4,
+              "resizeMode": "horizontal|vertical",
+              "previewImage": "./assets/widget-preview/aardehuizen.png",
+              "updatePeriodMillis": 1800000
+            }
+          ]
+        }
+      ]
+    ],
+    "extra": {
+      "apiBase": "http://127.0.0.1:8001"
+    }
+  }
+}
