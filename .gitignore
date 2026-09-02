@@ -25,3 +25,4 @@ app/.env
 Thumbs.db
 /backend/venv
 /backend/venv/Lib
+
